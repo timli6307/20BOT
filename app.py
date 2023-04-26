@@ -39,7 +39,22 @@ def callback():
 
     return 'OK'
 
-df = pd.read_excel("test.xlsx", sheet_name= '工作表1')
+
+df1 = pd.read_excel("test.xlsx", sheet_name= '工作表1')
+df2 = pd.read_excel('compare.xlsx', sheet_name='工作表1')
+diff = df1.compare(df2)#照寫
+if not diff.empty:
+    df1_over_limit = df1.query('碳排放 >= 30')
+    message = ""
+    for i, row_data in df1_over_limit.iterrows():
+        message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
+        if message:
+            line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))#XXXXXXXXX
+    df2 = pd.DataFrame(df1)
+df2.to_excel('compare.xlsx', sheet_name = '工作表1',index=False)
+
+#加入好友時 把user_id add到excel
+
 
 #使用者加入Bot後 傳送歡迎訊息 訊息要改成歡迎+自我介紹+功能說明
 @handler.add(FollowEvent)
@@ -54,14 +69,14 @@ def handle_message(event):
     user_message = event.message.text
     if'所有' in  event.message.text: 
         message = ""
-        for i ,row_data in df.iterrows():
+        for i ,row_data in df1.iterrows():
             message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
 
     if '超標工廠' in event.message.text:
-        df_over_limit = df.query('碳排放 >= 30')
+        df1_over_limit = df1.query('碳排放 >= 30')
         message = ""
-        for i, row_data in df_over_limit.iterrows():
+        for i, row_data in df1_over_limit.iterrows():
             message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         if message:
             line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
@@ -85,7 +100,7 @@ def handle_message(event):
 def handle_postback(event):
     if event.postback.data == "action=show_all_factories":
         message = ""
-        for i ,row_data in df.iterrows():
+        for i ,row_data in df1.iterrows():
             message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
 
@@ -108,7 +123,7 @@ def handle_postback(event):
     else:
         message = ""
         ci = event.postback.data
-        for i ,row_data in df.iterrows():
+        for i ,row_data in df1.iterrows():
             if ci == row_data['城市']:
                 message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
