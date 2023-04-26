@@ -117,7 +117,7 @@ def handle_postback(event):
             ]
         )
         template_message = TemplateSendMessage(
-            alt_text="請在手機上開啟此訊息",
+            alt_text="請在手機上開啟這個訊息",
             template=buttons_template
         )
         line_bot_api.reply_message(event.reply_token, template_message)
