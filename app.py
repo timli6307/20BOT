@@ -112,5 +112,6 @@ def handle_postback(event):
             if ci == row_data['城市']:
                 message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
+        
 if __name__ == "__main__":
     app.run()
