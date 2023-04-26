@@ -110,10 +110,10 @@ def handle_postback(event):
             title="請選擇",
             text="您要選擇哪個縣市？",
             actions=[
-                PostbackTemplateAction(label="台北市",data= '台北市',text= '台北市'),
-                PostbackTemplateAction(label="新北市",data= '新北市',text= '新北市'),
-                PostbackTemplateAction(label="桃園市",data= '桃園市',text= '桃園市'),
-                PostbackTemplateAction(label="台中市",data= '台中市',text= '台中市')
+                PostbackTemplateAction(label="台北市",data= 'a',text= '台北市'),
+                PostbackTemplateAction(label="新北市",data= 'b',text= '新北市'),
+                PostbackTemplateAction(label="桃園市",data= 'c',text= '桃園市'),
+                PostbackTemplateAction(label="台中市",data= 'd',text= '台中市')
             ]
         )
         template_message = TemplateSendMessage(
@@ -128,9 +128,7 @@ def handle_postback(event):
         ci = event.postback.data
         message = ""
         for i ,row_data in df.iterrows():
-            if ci == df.iloc[i,3]:
-                message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n-------------\n"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text= message))
+            line_bot_api.reply_message(event.reply_token,TextSendMessage(text = f"{row_data['城市']}"))
     #line_bot_api.reply_message(event.reply_token, TextSendMessage(text= getMsg(event.postback))
 if __name__ == "__main__":
     # 執行 Flask Server
