@@ -51,10 +51,7 @@ def handle_follow(event):
 # 當接收到 MessageEvent (文字訊息) 時的處理函式
 @handler.add(MessageEvent, message=TextMessage)#根據取得數據需要去做修改
 def handle_message(event):
-    # 取得使用者傳來的文字
-    
     user_message = event.message.text
-
     if'所有' in  event.message.text: 
         message = ""
         for i ,row_data in df.iterrows():
