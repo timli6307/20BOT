@@ -45,8 +45,6 @@ def callback():
 # 讀取 Excel 檔案中的資料
 df = pd.read_excel("test.xlsx", sheet_name= '工作表1')
 
-num_rows, num_cols = df.shape
-
 #使用者加入Bot後 傳送歡迎訊息 訊息要改成歡迎+自我介紹+功能說明
 @handler.add(FollowEvent)
 def handle_follow(event):
