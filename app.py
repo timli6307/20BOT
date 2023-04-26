@@ -1,6 +1,7 @@
 import requests
 import json
 import pandas as pd
+import Tokens as t
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi,
@@ -20,10 +21,10 @@ from linebot.models import (
 app = Flask(__name__)
 
 # 填入你的 LINE 機器人 Channel Access Token
-line_bot_api = LineBotApi('n2zf4JW8D/HFwIAL3ekM1/nF4fNEZBKMuSRBgcV/EZsDQCjeNm9PidcivDpnGUdtowQ/0mUtO0wz7+Vlbpr9eRFN+fAOffCmA6qUY6I+yE5JR208KfnqgxFhzh9mTxClVR7XaRE9AHmMz+0p+GEQrgdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(t.Token)
 
 # 填入你的 LINE 機器人 Channel Secret
-handler = WebhookHandler('0bb28ec8efa362b936c89246c51ec1c9')
+handler = WebhookHandler(t.Key)
 
 # 設定 Webhook URL
 @app.route("/callback", methods=['POST'])
