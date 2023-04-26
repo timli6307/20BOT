@@ -45,7 +45,7 @@ df = pd.read_excel("test.xlsx", sheet_name= '工作表1')
 @handler.add(FollowEvent)
 def handle_follow(event):
     user_id = event.source.user_id
-    message = TextSendMessage(text="歡迎加入我的 LINE Bot！")
+    message = TextSendMessage(text="歡迎加入Line 廢水監控機器人！'/n'輸入「所有」查看所有工廠數據'/n'輸入「超標工廠」查看所有超標工廠數據'/n'輸入「menu」查看各縣市工廠數據")
     line_bot_api.push_message(user_id, message)
 
 # 當接收到 MessageEvent (文字訊息) 時的處理函式
