@@ -13,8 +13,6 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,FollowEvent,UnfollowEvent,
     TemplateSendMessage, ButtonsTemplate, PostbackTemplateAction,PostbackEvent
 )
-from multiprocessing import current_process
-
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(t.Token)
@@ -90,7 +88,7 @@ df2 = pd.read_excel('compare.xlsx', sheet_name='工作表1')
 @handler.add(MessageEvent, message=TextMessage)#根據取得數據需要去做修改
 def handle_message(event):
     user_message = event.message.text
-    if'所有' in  event.message.text: 
+    if'水位' in  event.message.text:
         message = ""
         for i ,row_data in df1.iterrows():
             message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
@@ -151,9 +149,7 @@ def handle_postback(event):
                 message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
         line_bot_api.push_message(event.source.user_id, TextSendMessage(text=message))
 
-#print(f'[pid:{current_process().pid}] in {__name__}')
-
-def check_data():
+'''def check_data():
     df1 = pd.read_excel("test.xlsx", sheet_name= '工作表1')
     df2 = pd.read_excel('compare.xlsx', sheet_name='工作表1')
     diff = df1.compare(df2)#照寫
@@ -168,17 +164,41 @@ def check_data():
         
         # 將 DataFrame 儲存到 Excel 文件中
         with pd.ExcelWriter('compare.xlsx') as writer:
-            df1.to_excel(writer, sheet_name='工作表1', index=False)
+            df1.to_excel(writer, sheet_name='工作表1', index=False)'''
+            
 
+def get_message():
+    import serial
+    COM_PORT = 'COM3'    # 指定通訊埠名稱
+    BAUD_RATES = 9600    # 設定傳輸速率
+    ser = serial.Serial(COM_PORT, BAUD_RATES)   # 初始化序列通訊埠
+    try:
+        message = ""
+        while ser.in_waiting:          # 若收到序列資料…
+            data_raw = ser.readline()  # 讀取一行
+            data = data_raw.decode()   # 用預設的UTF-8解碼
+            print('接收到的資料：', data)
+            #data_list = list(data)
+            """if data_list[2] == '0':
+                message = '水庫A的水高於水庫B'
+            elif data_list[2] == '1':
+                message = '水庫A的水低於水庫B'
+            elif data_list[2] == '2':
+                message = '水庫A的水等於水庫B'
+            df = pd.read_excel('friendList.xlsx',sheet_name= 'Sheet1')
+        for i ,row_data in df.iterrows():
+            line_bot_api.push_message(row_data['user_id'] ,TextSendMessage(text= message))"""
+    except KeyboardInterrupt:
+        ser.close()    # 清除序列通訊物件
+        print('再見！')
 
-def run1():
+def run():
     while True:
-        check_data()
+        get_message()
         time.sleep(1)
-
 if __name__ == "__main__":
     
     from multiprocessing import Process
-    check_data =Process(target=run1)
-    check_data.start()
+    get_message = Process(target= run)
+    get_message.start()
     app.run()

@@ -1,18 +1,24 @@
-import pandas as pd
-df1 = pd.read_excel("test.xlsx", sheet_name= '工作表1')
-df2 = pd.read_excel('compare.xlsx', sheet_name='工作表1')
-def check_data():
-    global df1
-    diff = df1.compare(df2)#照寫
-    if not diff.empty:
-        df1_over_limit = df1.query('碳排放 >= 30')
+import serial  # 引用pySerial模組
+def water():
+    COM_PORT = 'COM3'    # 指定通訊埠名稱
+    BAUD_RATES = 9600    # 設定傳輸速率
+    ser = serial.Serial(COM_PORT, BAUD_RATES)   # 初始化序列通訊埠
+    try:
         message = ""
-        for i, row_data in df1_over_limit.iterrows():
-            message += f"工廠名稱: {row_data['工廠']}\n碳排放: {row_data['碳排放']}\n超標: {row_data['超標']}\n城市: {row_data['城市']}\n-------------\n"
-        df = pd.read_excel('friendList.xlsx',sheet_name= 'Sheet1')
-        for i ,row_data in df.iterrows():
-            print(message)
-        
-        # 將 DataFrame 儲存到 Excel 文件中
-        with pd.ExcelWriter('compare.xlsx') as writer:
-            df1.to_excel(writer, sheet_name='工作表1', index=False)
+        while ser.in_waiting:          # 若收到序列資料…
+            #data_raw =   # 讀取一行
+            data_raw = ser.readline()  # 用預設的UTF-8解碼
+            data = data_raw.decode()
+            print('原本接收到的資料',data_raw)
+            print('接收到的資料：', data)# test
+            """if data[0] == '0':
+                message = '水庫A的水高於水庫B'
+            elif data[0] == '1':
+                message = '水庫A的水低於水庫B'
+            elif data[0] == '2':
+                message = '水庫A的水等於水庫B'"""
+    except KeyboardInterrupt:
+        ser.close()    # 清除序列通訊物件
+        print('exit')
+while True:
+    water()
